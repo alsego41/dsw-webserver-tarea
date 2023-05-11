@@ -5,6 +5,8 @@ const host = "localhost"
 const port = 3000
 
 const requestListener = function (req, res) {
+    let fileName
+    let httpCode
     if (req.method !== 'GET') {
         fileName = '/405.html'
         httpCode = 405
@@ -17,7 +19,15 @@ const requestListener = function (req, res) {
         ) {
             fileName = '/index.html'
             httpCode = 200
-        } else {
+        } else if (req.url === '/hola' || 
+            req.url === '/hola.html' || 
+            req.url === '/holaMundo' ||
+            req.url === '/holaMundo.html'
+        ) {
+            fileName = '/holaMundo.html'
+            httpCode = 200
+        } 
+        else {
             fileName = '/404.html'
             httpCode = 404
         }
@@ -34,11 +44,12 @@ const requestListener = function (req, res) {
             return
         })
     fs.writeFile(__dirname + '/mycoolserver.log', 
-        `${req.method}, ${req.url}, ${Date.now()}, ${httpCode}\n`)   
+        `${req.method}, ${req.url}, ${Date.now()}, ${httpCode}\n`,
+        {flag: 'a'})   
         .then()
-        .catch(
+        .catch(err =>{
             console.log("Error al escribir en log")
-        )
+        })
 }
 
 const server = http.createServer(requestListener)
